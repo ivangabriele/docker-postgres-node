@@ -1,0 +1,198 @@
+dist: focal
+language: shell
+os: linux
+
+services:
+  - docker
+
+env:
+  - DOKER_HUB_REPOSITORY=ivangabriele/postgres-node
+
+stages:
+  - Initialize
+  - Build
+  - Test
+
+_build_docker_image: &build_docker_image
+  stage: Build
+  before_script: ./scripts/travis/set_environment_variables.sh
+  script: ./scripts/travis/build_docker_image.sh
+
+_test_docker_image: &test_docker_image
+  stage: Test
+  before_script: ./scripts/travis/set_environment_variables.sh
+  script: bats ./tests
+
+# _deploy_to_docker_hub: &deploy_to_docker_hub
+#   before_script:
+#     - cd "${POSTGRES_VERSION}/${VARIANT}"
+#     - IMAGE="ivangabriele/postgres-node:${POSTGRES_VERSION}${VARIANT:+-${VARIANT}}-node${VARIANT:+-node${VARIANT}}"
+#   script:
+#     - docker build --build-arg NODE_VERSION="${NODE_VERSION}" -t "${IMAGE}" .
+#   before_deploy:
+#     - |
+#       if [ -z "${VARIANT}" ]; then
+#         cd ..
+#       else
+#         cd ../..
+#       fi
+#     - docker images
+#   deploy:
+#     provider: script
+#     script: ./scripts/travis/push_to_docker_hub.sh
+#     skip_cleanup: true
+#     on:
+#       branch: master
+#       repo: ivangabriele/docker-postgres-node
+
+jobs:
+  fast_finish: true
+  include:
+    - <<: *build_docker_image
+      env: POSTGRES_VERSION=latest
+      workspaces:
+        create:
+          name: artifact_latest
+          paths:
+            - ./build/latest.tar
+    - <<: *build_docker_image
+      env: POSTGRES_VERSION=latest NODE_VERSION=15
+      workspaces:
+        create:
+          name: artifact_latest-node15
+          paths:
+            - ./build/latest-node15.tar
+    - stage: Test
+      language: node_js
+      node_js: "14"
+      install: npm i -g bats
+      before_script: ./scripts/travis/set_environment_variables.sh
+      script:
+        - ls -la ./build
+        - bats ./tests
+      workspaces:
+        use:
+          - artifact_latest
+          - artifact_latest-node15
+    # - stage: Build
+    #   env: POSTGRES_VERSION=alpine NODE_VERSION=15
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=13 NODE_VERSION=15
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=13 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=13
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=13 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=12 NODE_VERSION=15
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=12 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=12
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=12 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=11 NODE_VERSION=15
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=11 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=11
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=11 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=10 NODE_VERSION=15
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=10 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=10
+    #   <<: *_build_docker_image
+    # - stage: Build
+    #   env: POSTGRES_VERSION=10 VARIANT=alpine
+    #   <<: *_build_docker_image
+    # - stage: Test
+    #   language: node_js
+    #   node_js: "14"
+    #   before_script: npm i -g bats
+    #   script: bats ./tests
+    # - stage: Release
+    #   env: POSTGRES_VERSION=latest NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=alpine NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=latest
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=13 NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=13 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=13
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=13 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=12 NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=12 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=12
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=12 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=11 NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=11 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=11
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=11 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=10 NODE_VERSION=15
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=10 NODE_VERSION=15 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=10
+    #   <<: *_deploy_to_docker_hub
+    # - stage: Release
+    #   env: POSTGRES_VERSION=10 VARIANT=alpine
+    #   <<: *_deploy_to_docker_hub
+
+notifications:
+  email: false
