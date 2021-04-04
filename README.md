@@ -1,41 +1,32 @@
 # PostgreSQL Docker image with Node.js
 
 [![img-docker]][link-docker]
-[![img-travis]][link-travis]
+[![img-github-actions]][link-github-actions]
 
 A Docker image including:
+
 - [PostgreSQL][link-postgres]
-- [Node.js][link-node] (_including npm, npx & co_)
+- [Node.js][link-node] (_including npm, npx & co._)
 - [Yarn][link-yarn]
 
 You can use it exactly as you would use the official [PostgreSQL Docker image][link-postgres].
 
+The images are automatically updated on a daily basis.
+
 ## Supported tags and respective `Dockerfile` links
 
-- [`latest`](https://github.com/ivangabriele/postgres-node/blob/master/latest/Dockerfile)
-    - `postgres:latest`
-- [`alpine`](https://github.com/ivangabriele/postgres-node/blob/master/alpine/Dockerfile)
-    - `postgres:alpine`
-- [`13`](https://github.com/ivangabriele/postgres-node/blob/master/13/Dockerfile)
+By default, Node.js v14 is installed. You can add `-node15` to use Node.js v15 instead.
+
+- [`13`, `13-node15`, `latest`, `latest-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/13.Dockerfile)
     - `postgres:13`
-- [`13-alpine`](https://github.com/ivangabriele/postgres-node/blob/master/13/alpine/Dockerfile)
-    - `postgres:13-alpine`
-- [`12`](https://github.com/ivangabriele/postgres-node/blob/master/12/Dockerfile)
+- [`12`, `12-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/12.Dockerfile)
     - `postgres:12`
-- [`12-alpine`](https://github.com/ivangabriele/postgres-node/blob/master/12/alpine/Dockerfile)
-    - `postgres:12-alpine`
-- [`11`](https://github.com/ivangabriele/postgres-node/blob/master/11/Dockerfile)
+- [`11`, `11-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/11.Dockerfile)
     - `postgres:11`
-- [`11-alpine`](https://github.com/ivangabriele/postgres-node/blob/master/11/alpine/Dockerfile)
-    - `postgres:12-alpine`
-- [`10`](https://github.com/ivangabriele/postgres-node/blob/master/10/Dockerfile)
+- [`10`, `10-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/10.Dockerfile)
     - `postgres:10`
-- [`10-alpine`](https://github.com/ivangabriele/postgres-node/blob/master/10/alpine/Dockerfile)
-    - `postgres:10-alpine`
-- [`9`](https://github.com/ivangabriele/postgres-node/blob/master/9/Dockerfile)
-    - `postgres:9`
-- [`9-alpine`](https://github.com/ivangabriele/postgres-node/blob/master/9/alpine/Dockerfile)
-    - `postgres:9-alpine`
+- [`9`, `9-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/9.Dockerfile)
+    - `postgres:10`
 
 ## Contribute
 
@@ -50,11 +41,12 @@ bats ./tests
 ---
 
 [img-docker]: https://img.shields.io/docker/pulls/ivangabriele/postgres-node?style=for-the-badge
-[img-travis]: https://img.shields.io/travis/com/ivangabriele/docker-postgres-node/master?style=for-the-badge
+[img-github-actions]:
+  https://img.shields.io/github/workflow/status/ivangabriele/docker-postgres-node/Test%20&%20Release/master?label=Test%20%26%20Release&style=for-the-badge
 
 [link-bats]: https://github.com/bats-core/bats-core
 [link-docker]: https://hub.docker.com/repository/docker/ivangabriele/postgres-node
 [link-node]: https://nodejs.org
 [link-postgres]: https://hub.docker.com/_/postgres
-[link-travis]: https://travis-ci.com/ivangabriele/docker-postgres-node
+[link-github-actions]: https://github.com/ivangabriele/docker-postgres-node/actions/workflows/tests-and-release.yml
 [link-yarn]: https://yarnpkg.com

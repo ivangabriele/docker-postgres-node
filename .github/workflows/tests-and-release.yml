@@ -1,0 +1,103 @@
+name: Test & Release
+
+on:
+  push:
+  schedule:
+    - cron: "0 0 6 * *"
+
+env:
+  DOCKER_HUB_REPOSITORY: "ivangabriele/postgres-node"
+  NODE_VERSION_LTS: "14"
+
+jobs:
+  build:
+    name: Build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        POSTGRES_VERSION: ["13", "12", "11", "10"]
+        # An empty Node.js version represents the default version (`NODE_VERSION_LTS`):
+        NODE_VERSION: ["", "15"]
+        VARIANT: [""]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Set environment variables
+        env:
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
+          VARIANT: ${{ matrix.VARIANT }}
+          NODE_VERSION: ${{ matrix.NODE_VERSION }}
+        run: ./scripts/github/set_environment_variables.sh
+      - name: Build Docker image
+        env:
+          NODE_VERSION: ${{ matrix.NODE_VERSION }}
+          DOCKER_DOCKERFILE_NAME: ${{ env.DOCKER_DOCKERFILE_NAME }}
+          DOCKER_IMAGE_TAG: ${{ env.DOCKER_IMAGE_TAG }}
+          DOCKER_IMAGE_ARTIFACT_PATH: ${{ env.DOCKER_IMAGE_ARTIFACT_PATH }}
+        run: ./scripts/github/build_docker_image.sh
+      - name: Upload artifact
+        uses: actions/upload-artifact@v2
+        with:
+          name: "${{ env.DOCKER_IMAGE_VERSION }}"
+          path: "${{ env.DOCKER_IMAGE_ARTIFACT_PATH }}"
+          retention-days: 1
+  test:
+    name: Test
+    needs: build
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: true
+      matrix:
+        POSTGRES_VERSION: ["13", "12", "11", "10"]
+        # An empty Node.js version represents the default version (`NODE_VERSION_LTS`):
+        NODE_VERSION: ["", "15"]
+        VARIANT: [""]
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Use Node.js
+        uses: actions/setup-node@v2
+      - name: Set environment variables
+        env:
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
+          VARIANT: ${{ matrix.VARIANT }}
+          NODE_VERSION: ${{ matrix.NODE_VERSION }}
+        run: ./scripts/github/set_environment_variables.sh
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          name: "${{ env.DOCKER_IMAGE_VERSION }}"
+          path: ./build
+      - name: Setup tests
+        env:
+          DOCKER_IMAGE_TAG: ${{ env.DOCKER_IMAGE_TAG }}
+          DOCKER_IMAGE_ARTIFACT_PATH: ${{ env.DOCKER_IMAGE_ARTIFACT_PATH }}
+          DOCKER_CONTAINER_NAME: ${{ env.DOCKER_CONTAINER_NAME }}
+        run: ./scripts/github/setup_tests.sh
+      - name: Run tests
+        env:
+          POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
+          NODE_VERSION: ${{ matrix.NODE_VERSION }}
+          DOCKER_IMAGE_TAG: ${{ env.DOCKER_IMAGE_TAG }}
+          DOCKER_CONTAINER_NAME: ${{ env.DOCKER_CONTAINER_NAME }}
+        run: ./node_modules/.bin/bats ./tests
+  release:
+    name: Release
+    needs: test
+    if: ${{ github.ref == 'refs/heads/master' }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout source code
+        uses: actions/checkout@v2
+      - name: Download artifact
+        uses: actions/download-artifact@v2
+        with:
+          path: ./build
+      - name: Login to Docker Hub
+        uses: docker/login-action@v1
+        with:
+          username: ${{ secrets.DOCKER_HUB_USERNAME }}
+          password: ${{ secrets.DOCKER_HUB_TOKEN }}
+      - name: Push to Docker Hub
+        run: ./scripts/github/push_to_docker_hub.sh
