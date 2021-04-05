@@ -3,14 +3,15 @@ set -e
 
 echo "🚢 Building Docker image…"
 if [[ -z "${NODE_VERSION}" ]]; then
-  docker build -f "./dockerfiles/${DOCKER_DOCKERFILE_NAME}.Dockerfile" -t "${DOCKER_IMAGE_TAG}" .
+  node_version="${NODE_VERSION_LTS}"
 else
-  docker build \
-    --build-arg NODE_VERSION="${NODE_VERSION}" \
-    -f "./dockerfiles/${DOCKER_DOCKERFILE_NAME}.Dockerfile" \
-    -t "${DOCKER_IMAGE_TAG}" \
-    .
+  node_version="${NODE_VERSION}"
 fi
+docker build \
+  --build-arg NODE_VERSION="${node_version}" \
+  -f "./dockerfiles/${DOCKER_DOCKERFILE_NAME}.Dockerfile" \
+  -t "${DOCKER_IMAGE_TAG}" \
+  .
 
 echo "🚢 Generating Docker artifact…"
 docker save -o "${DOCKER_IMAGE_ARTIFACT_PATH}" "${DOCKER_IMAGE_TAG}"

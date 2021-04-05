@@ -7,7 +7,9 @@ on:
 
 env:
   DOCKER_HUB_REPOSITORY: "ivangabriele/postgres-node"
+  NODE_VERSION_LATEST: "15"
   NODE_VERSION_LTS: "14"
+  POSTGRES_VERSION_LATEST: "13"
 
 jobs:
   build:
@@ -19,14 +21,12 @@ jobs:
         POSTGRES_VERSION: ["13", "12", "11", "10"]
         # An empty Node.js version represents the default version (`NODE_VERSION_LTS`):
         NODE_VERSION: ["", "15"]
-        VARIANT: [""]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
       - name: Set environment variables
         env:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
-          VARIANT: ${{ matrix.VARIANT }}
           NODE_VERSION: ${{ matrix.NODE_VERSION }}
         run: ./scripts/github/set_environment_variables.sh
       - name: Build Docker image
@@ -52,7 +52,6 @@ jobs:
         POSTGRES_VERSION: ["13", "12", "11", "10"]
         # An empty Node.js version represents the default version (`NODE_VERSION_LTS`):
         NODE_VERSION: ["", "15"]
-        VARIANT: [""]
     steps:
       - name: Checkout source code
         uses: actions/checkout@v2
@@ -61,7 +60,6 @@ jobs:
       - name: Set environment variables
         env:
           POSTGRES_VERSION: ${{ matrix.POSTGRES_VERSION }}
-          VARIANT: ${{ matrix.VARIANT }}
           NODE_VERSION: ${{ matrix.NODE_VERSION }}
         run: ./scripts/github/set_environment_variables.sh
       - name: Download artifact
