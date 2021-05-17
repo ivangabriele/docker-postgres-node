@@ -15,17 +15,17 @@ The images are automatically updated on a daily basis.
 
 ## Supported tags and respective `Dockerfile` links
 
-By default, Node.js v14 is installed. You can add `-node15` to use Node.js v15 instead.
+By default, Node.js v14 is installed. You can add `-node16` to use Node.js v16 instead.
 
-- [`13`, `13-node15`, `latest`, `latest-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/13.Dockerfile)
+- [`13`, `13-node16`, `latest`, `latest-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/13.Dockerfile)
   - `postgres:13`
-- [`12`, `12-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/12.Dockerfile)
+- [`12`, `12-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/12.Dockerfile)
   - `postgres:12`
-- [`11`, `11-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/11.Dockerfile)
+- [`11`, `11-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/11.Dockerfile)
   - `postgres:11`
-- [`10`, `10-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/10.Dockerfile)
+- [`10`, `10-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/10.Dockerfile)
   - `postgres:10`
-- [`9`, `9-node15`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/9.Dockerfile)
+- [`9`, `9-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/9.Dockerfile)
   - `postgres:10`
 
 ## Contribute
