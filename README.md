@@ -15,18 +15,14 @@ The images are automatically updated on a daily basis.
 
 ## Supported tags and respective `Dockerfile` links
 
+The first part of the tag respects the official [PostgreSQL][link-postgres] ones (i.e. `13` is extended from `postgres:13`).
+
 By default, Node.js v14 is installed. You can add `-node16` to use Node.js v16 instead.
 
 - [`13`, `13-node16`, `latest`, `latest-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/13.Dockerfile)
-  - `postgres:13`
 - [`12`, `12-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/12.Dockerfile)
-  - `postgres:12`
 - [`11`, `11-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/11.Dockerfile)
-  - `postgres:11`
 - [`10`, `10-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/10.Dockerfile)
-  - `postgres:10`
-- [`9`, `9-node16`](https://github.com/ivangabriele/postgres-node/blob/master/dockerfiles/9.Dockerfile)
-  - `postgres:10`
 
 ## Contribute
 
@@ -45,8 +41,8 @@ bats ./tests
   https://img.shields.io/github/workflow/status/ivangabriele/docker-postgres-node/Test%20&%20Release/master?label=Test%20%26%20Release&style=for-the-badge
 
 [link-bats]: https://github.com/bats-core/bats-core
-[link-docker]: https://hub.docker.com/repository/docker/ivangabriele/postgres-node
+[link-docker]: https://hub.docker.com/r/ivangabriele/postgres-node
 [link-node]: https://nodejs.org
 [link-postgres]: https://hub.docker.com/_/postgres
-[link-github-actions]: https://github.com/ivangabriele/docker-postgres-node/actions/workflows/tests-and-release.yml
+[link-github-actions]: https://github.com/ivangabriele/docker-postgres-node/actions/workflows/test-and-release.yml
 [link-yarn]: https://yarnpkg.com
